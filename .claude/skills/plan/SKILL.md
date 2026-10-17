@@ -5,34 +5,77 @@ description: Turn a plain-English feature description into an approved, ordered 
 
 # /plan
 
-> **Skeleton.** This file records the contract from the Issue-to-PR Loop design so the skill can be written against it. Replace the step bodies with real instructions before first use.
+A planning conversation is the cheapest place to spend a strong model: one Opus session sets the criteria for many Sonnet runs. Ask the clarifying questions now, so the implementing run doesn't have to. Creating an issue spends nothing; promoting it to Ready is the owner's spend decision, so this skill never promotes and never adds `claude`.
 
-## Preconditions (check first, refuse and say what to fix)
+## Step 1: preconditions
 
-1. The model is Opus (`/model opus` first; the override from frontmatter lasts one turn and this is a conversation).
-2. `gh --version` is 2.94.0 or later (`--parent`, `--blocked-by` on `gh issue create`).
-3. `.claude/project.json` exists (project node id, Status field id, option ids for Backlog / Ready / In Progress / Done).
+Check all three before reading anything; stop and say what to fix if one fails:
 
-## Read
+1. **Model is Opus.** Ask the harness which model is active; if it is not Opus, say "run `/model opus` first, then `/plan` again" and stop. (Frontmatter can't set the model for a conversation; the override lasts one turn.)
+2. **`gh --version` ≥ 2.94.0** (`--parent` and `--blocked-by` on `gh issue create`).
+3. **`.claude/project.json` exists** with `repo`, `project_number`, `project_id`, `status_field_id`, `status_options.backlog`. Refuse without it: `setup.sh` has not run.
 
-`docs/SPEC.md`, `docs/ARCHITECTURE.md`, the open issues (`gh issue list --state open --json number,title,labels`), and the feature description the owner gave.
+## Step 2: read
 
-## Ask the clarifying questions now
+- `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `CLAUDE.md`, and `.claude/rules/*.md`.
+- Open issues: `gh issue list --state open --limit 200 --json number,title,labels,body` — to avoid duplicating work already planned and to find an existing epic this feature belongs to.
+- The feature description the owner gave with the command (or ask for it if the command was bare).
 
-So the implementing run doesn't have to. Keep asking until a breakdown can be written without guessing.
+## Step 3: ask
 
-## Propose a breakdown
+Ask the clarifying questions one message at a time, as few as possible, only what a breakdown can't be written without: scope edges, which existing flows it touches, data model changes, auth implications, what "done" looks like to the owner, anything SPEC.md is silent on. Stop asking when you can write criteria you'd be willing to be tested against.
 
-Ordered, vertical slices, one PR each, independent where possible. For each issue: title; Given/When/Then criteria numbered AC-1, AC-2, …; the area of the codebase; dependencies on other issues in the breakdown; suggested `risk:high`; a size. The owner edits or approves in the conversation. **Nothing is created before approval.**
+## Step 4: propose the breakdown
 
-## Create, after approval
+In the conversation, not on GitHub. Ordered, vertical slices (one PR each, through every layer the slice needs), independent where possible. For each issue:
 
-1. The parent feature issue, labeled `epic`. It holds the sub-issues, not work: `/dispatch` skips it and the owner closes it when the last sub-issue merges.
-2. Each sub-issue in dependency order (every blocker exists before it is named) with `gh issue create --parent <epic> --blocked-by <m,n> --label risk:high` (label only where suggested). `gh` cannot fill a YAML issue form, so write the body in the form's section shape, with the same headings: **Summary**, **Why**, **Acceptance criteria**, **Out of scope**, **How to verify in the preview**, **Dependencies**.
-3. Add each to the project and set Status = Backlog with `gh project item-add` and `gh project item-edit`, ids from `.claude/project.json`. If the project call fails for lack of permission, the issue still exists: report it the way `/dispatch` does ("created #N; card not added: <reason>").
+- **Title** (imperative, under 70 chars)
+- **Summary**, **Why**
+- **Acceptance criteria**: numbered `AC-1`, `AC-2`, … in Given/When/Then. Each one will become a test named with that id, so each must be checkable by a test. Aim for 2–6 per issue; more means the issue is too big.
+- **Out of scope**
+- **How to verify in the preview**: click-by-click.
+- **Area**: the directories it touches (the reviewer flags files outside it).
+- **Depends on**: other issues in this breakdown, by their position number.
+- **Suggested `risk:high`**: yes/no, with the reason (auth, payments, deletion, migrations, or an area CLAUDE.md names).
+- **Size**: S/M/L. An L is a signal to split.
 
-Never add `claude`, never promote to Ready: creating an issue spends nothing; the owner promotes.
+The owner edits or approves in the conversation. **Nothing is created before an explicit approval.** On "approve", proceed; on edits, re-propose the changed items.
 
-## Report
+## Step 5: create, in dependency order
 
-The epic number, each sub-issue number with its blockers, and anything that didn't land.
+1. **The epic parent.** One issue for the feature, labeled `epic`, body: the feature description, the ordered list of sub-issue titles (fill in numbers as they are created), and the line "Holds the sub-issues; not work. /dispatch skips it. Close by hand when the last sub-issue merges." Add it to the project in Backlog (step 5.3).
+2. **Each sub-issue**, in an order where every blocker already exists. Write the body in the issue form's section shape, since `gh` cannot fill a YAML form — same headings, same resulting issue:
+
+   ```
+   ### Summary
+   …
+   ### Why
+   …
+   ### Acceptance criteria
+   - AC-1: Given …, when …, then ….
+   - AC-2: …
+   ### Out of scope
+   …
+   ### How to verify in the preview
+   1. …
+   ### Dependencies
+   Blocked by #M (set in the sidebar by this skill; /dispatch reads the relationship, not this text).
+   ```
+
+   ```bash
+   gh issue create --title "…" --body-file body.md --parent "$EPIC" --blocked-by "12,13" --label risk:high
+   ```
+   `--blocked-by` only when there are blockers; `--label risk:high` only where suggested. Never `--label claude`. Capture the new number from the URL it prints.
+3. **Add to the project and set Backlog**, for the epic and every sub-issue:
+   ```bash
+   ITEM="$(gh project item-add "$PROJECT_NUMBER" --owner @me --url "$ISSUE_URL" --format json --jq .id)"
+   gh project item-edit --id "$ITEM" --project-id "$PROJECT_ID" --field-id "$STATUS_FIELD_ID" --single-select-option-id "$BACKLOG"
+   ```
+   If either call fails for lack of permission, the issue still exists: record "created #N; card not added: <reason>" in the same words `/dispatch` uses, and continue. (The project's auto-add toggle will usually pick it up anyway.)
+4. Edit the epic's body to replace the title list with `#N` links once all numbers exist.
+
+If creation fails partway, stop, report exactly which issues exist and which don't, and do not retry automatically: a second run would duplicate the ones that succeeded.
+
+## Step 6: report
+
+The epic number, then one line per sub-issue: number, title, blockers, labels, card status. Remind the owner that everything is in Backlog and nothing runs until they promote to Ready and either add `claude` or run `/dispatch`.
