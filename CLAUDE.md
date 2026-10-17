@@ -4,11 +4,13 @@
 
 ## What this is
 
-<!-- One paragraph. The product in plain English; SPEC.md has the rest. -->
+<!-- One paragraph. The product in plain English; docs/SPEC.md has the rest. -->
 
 ## Map
 
-`ARCHITECTURE.md` is the map of the codebase: every layer and where the example of each pattern lives. Read it before writing code, and copy the nearest example rather than inventing a shape.
+`docs/ARCHITECTURE.md` is the map of the codebase: every layer and where the example of each pattern lives. Read it before writing code, and copy the nearest example rather than inventing a shape.
+
+Capitalized docs (`ARCHITECTURE.md`, `SPEC.md`, any new one) live in `docs/`. Only files read natively from the root stay there: this file and `README.md`. `.claude/REVIEW.md` stays under `.claude/` because the Action restores that directory from the base branch.
 
 ## Commands
 

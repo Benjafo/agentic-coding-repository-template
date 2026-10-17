@@ -1,6 +1,6 @@
-# SPEC.md
+# docs/SPEC.md
 
-<!-- Skeleton. /bootstrap writes the first version from the interview; the owner keeps it current when the product changes direction. This is the hinge: /plan reads it; implementing runs see it through ARCHITECTURE.md and CLAUDE.md. Write it as you would explain the app to a new hire. -->
+<!-- Skeleton. /bootstrap writes the first version from the interview; the owner keeps it current when the product changes direction. This is the hinge: /plan reads it; implementing runs see it through docs/ARCHITECTURE.md and CLAUDE.md. Write it as you would explain the app to a new hire. -->
 
 ## What it is
 

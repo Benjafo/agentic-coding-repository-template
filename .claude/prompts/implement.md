@@ -16,7 +16,7 @@ Run link: {{RUN_URL}}
 
 ## Orient first
 
-Read `CLAUDE.md`, then `ARCHITECTURE.md`, then `SPEC.md` if the issue touches product behavior. Rules scoped to paths live in `.claude/rules/`. Copy the existing example of each pattern rather than inventing one.
+Read `CLAUDE.md`, then `docs/ARCHITECTURE.md`, then `docs/SPEC.md` if the issue touches product behavior. Rules scoped to paths live in `.claude/rules/`. Copy the existing example of each pattern rather than inventing one.
 
 ## Ask instead of guess
 
@@ -27,7 +27,7 @@ If an earlier run already asked and the owner answered, proceed on the answer. D
 ## Build it
 
 1. **Criteria tests first, as their own commit.** The first commit on the branch contains one failing test per acceptance criterion and nothing else. Each test name starts with the criterion id: `AC-2: rejects an expired token`. Run the suite to confirm they fail for the right reason before committing. Do not touch these tests afterward; if a criterion turns out to be wrong, that is an Ask, not an edit.
-2. **Implement** in as many commits as the change logically needs. Follow the conventions in `CLAUDE.md` and the layout in `ARCHITECTURE.md`. Stay inside the area the issue names; a file touched outside it is a review trigger.
+2. **Implement** in as many commits as the change logically needs. Follow the conventions in `CLAUDE.md` and the layout in `docs/ARCHITECTURE.md`. Stay inside the area the issue names; a file touched outside it is a review trigger.
 3. **Verify locally** the way CI will: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. Lint fails on skipped, focused, empty, or assertion-free tests. Patch coverage on changed lines must reach the CI threshold.
 4. **Screenshots** go under `screenshots/issue-{{ISSUE_NUMBER}}/`, one file per criterion they illustrate (`ac-2.png`), committed as the **last** commit before the PR. If `CLAUDE.md` says there is no renderable UI, or the capture tool isn't wired, skip this step and say "no screenshots: no renderable UI" in the report. Never omit the line silently.
 5. **Push**, then open the PR as the very last command, after the final push, so the review that fires on `opened` sees the whole branch.

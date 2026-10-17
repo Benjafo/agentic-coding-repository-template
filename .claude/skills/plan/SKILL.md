@@ -15,7 +15,7 @@ description: Turn a plain-English feature description into an approved, ordered 
 
 ## Read
 
-`SPEC.md`, `ARCHITECTURE.md`, the open issues (`gh issue list --state open --json number,title,labels`), and the feature description the owner gave.
+`docs/SPEC.md`, `docs/ARCHITECTURE.md`, the open issues (`gh issue list --state open --json number,title,labels`), and the feature description the owner gave.
 
 ## Ask the clarifying questions now
 

@@ -19,7 +19,7 @@ Find the issue number in the body (`Closes #M`) and fetch it: `gh issue view <M>
 - No existing test was modified or deleted. New tests are expected; changed tests mean old behavior was redefined, and that needs the issue to say so.
 - Nothing skipped, focused, loosened, or snapshot-blessed to get green.
 
-## 3. Conventions against CLAUDE.md and ARCHITECTURE.md
+## 3. Conventions against CLAUDE.md and docs/ARCHITECTURE.md
 
 Read both, then `.claude/rules/*.md` for the paths the diff touches. Report every departure with the rule it departs from. If the PR proposes a CLAUDE.md or rules addition under "What I had to guess", say whether the proposal matches what the code actually does.
 

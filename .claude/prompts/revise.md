@@ -8,7 +8,7 @@ Run settings: model `{{MODEL}}`, effort `{{EFFORT}}`, advisor `{{ADVISOR}}`, ris
 
 ## Orient
 
-Read `CLAUDE.md` and `ARCHITECTURE.md`. Then `gh pr view {{PR_NUMBER}} --comments` and `gh pr diff {{PR_NUMBER}}` to see the PR's body, the reviewer's findings, and the current diff. The PR body's "What changed", "How to verify", and "Tests" sections are yours to keep accurate.
+Read `CLAUDE.md` and `docs/ARCHITECTURE.md`. Then `gh pr view {{PR_NUMBER}} --comments` and `gh pr diff {{PR_NUMBER}}` to see the PR's body, the reviewer's findings, and the current diff. The PR body's "What changed", "How to verify", and "Tests" sections are yours to keep accurate.
 
 ## Config paths were restored from `development`
 

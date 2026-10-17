@@ -2,7 +2,7 @@
 
 Template repo for the Issue-to-PR loop: a labeled issue starts a fresh Claude Code run on a GitHub Actions runner that opens a pull request against `development`. PRs are judged from signals (CI, preview, an independent review, the PR report, test names), not by reading the diff.
 
-Everything identical across projects lives here. The judgment calls (`SPEC.md`, the stack, the first examples) are made once per project by `/bootstrap`, interactively.
+Everything identical across projects lives here. The judgment calls (`docs/SPEC.md`, the stack, the first examples) are made once per project by `/bootstrap`, interactively.
 
 ## What's in the box
 
@@ -25,7 +25,8 @@ Everything identical across projects lives here. The judgment calls (`SPEC.md`, 
 | `tools/eslint/integrity-rules.js` | Lint rules: skipped, focused, empty, assertion-free tests fail |
 | `tools/patch-coverage.mjs` | Coverage on changed lines from `lcov.info`, no external account |
 | `setup.sh` | Labels, project board, `.claude/project.json`, `production`, rulesets, secrets |
-| `CLAUDE.md`, `ARCHITECTURE.md`, `SPEC.md` | Skeletons /bootstrap fills |
+| `CLAUDE.md` | Skeleton /bootstrap fills; stays in root so Claude Code reads it |
+| `docs/ARCHITECTURE.md`, `docs/SPEC.md` | Skeletons /bootstrap fills. Capitalized docs live in `docs/`; only files read natively from the root (`CLAUDE.md`, `README.md`) stay there. |
 
 The template ships `development` only. `setup.sh` creates `production` from it so the two share history and a release PR is possible.
 

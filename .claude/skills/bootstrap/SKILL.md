@@ -1,6 +1,6 @@
 ---
 name: bootstrap
-description: Once per project, interactively, on Fable. Interview the owner, write SPEC.md, plan in plan mode, scaffold the stack with CI wired and one tested example of each pattern, fill CLAUDE.md and ARCHITECTURE.md, open the bootstrap PR, then file the probe issue. Never unattended.
+description: Once per project, interactively, on Fable. Interview the owner, write docs/SPEC.md, plan in plan mode, scaffold the stack with CI wired and one tested example of each pattern, fill CLAUDE.md and docs/ARCHITECTURE.md, open the bootstrap PR, then file the probe issue. Never unattended.
 ---
 
 # /bootstrap
@@ -29,12 +29,12 @@ Ask, one topic at a time, and don't proceed until each is answered:
 
 ## Produce, in order
 
-1. **SPEC.md** from the answers. Show it and get approval before anything else.
-2. **Plan** in plan mode: stack, layout, the list of patterns ARCHITECTURE.md will name (route, component, data access, whatever the stack has), what CI needs (DB service, env vars, migrate, seed). The owner approves.
+1. **docs/SPEC.md** from the answers. Show it and get approval before anything else.
+2. **Plan** in plan mode: stack, layout, the list of patterns docs/ARCHITECTURE.md will name (route, component, data access, whatever the stack has), what CI needs (DB service, env vars, migrate, seed). The owner approves.
 3. **Scaffold** on branch `bootstrap`: the framework, the test runner wired into `package.json` scripts (`lint`, `typecheck`, `test`, `test:coverage` emitting `coverage/lcov.info`, `coverage:patch`, `build`, `dev`), and **one real vertical slice through every pattern, each with a test** named `AC-n: …`, so a run has something to copy. Delete the placeholder `src/example.js` and `test/example.test.js`. Keep `test/lint-rules.test.js`.
 4. **CI wiring**: the runner's lcov output path, `PATCH_COVERAGE_INCLUDE` set to the real source roots, any DB service/env/migrate/seed steps in `ci.yml` and in the implementer jobs (`claude-issues.yml`, `claude.yml`) but **not** in `claude-review.yml`. Add the dev-server, migrate, seed, and screenshot commands to `.claude/settings.json` `permissions.allow` by name.
 5. **Screenshot capture**, when there is a renderable UI: a headless browser used as a tool in the run (not an e2e suite), writing to `screenshots/issue-N/`. Record in `CLAUDE.md` whether screenshots are expected or "no renderable UI".
-6. **CLAUDE.md** (concise: conventions that can only be prose, the screenshot decision, the commands) and **ARCHITECTURE.md** (a real map: every layer, where each pattern's example lives). First `.claude/rules/*.md` for path-scoped conventions.
+6. **CLAUDE.md** (concise: conventions that can only be prose, the screenshot decision, the commands) and **docs/ARCHITECTURE.md** (a real map: every layer, where each pattern's example lives). First `.claude/rules/*.md` for path-scoped conventions.
 7. **Open the bootstrap PR** against `development`. It gets CI (first run on the skeleton) and no Claude review (the review workflow skips head `bootstrap`); the owner reads it.
 8. After the owner merges: **file the probe issue** in the issue form's shape (Summary, Why, Acceptance criteria AC-1…, Out of scope, How to verify), small and real, and tell the owner to add `claude`. Bootstrap is not done until the pipeline has produced its first PR.
 
