@@ -35,9 +35,7 @@
       "Bash(gh label:*)",
       "Bash(gh secret:*)",
       "Bash(gh variable:*)",
-      "Bash(gh api:*)",
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)"
+      "Bash(gh api:*)"
     ]
   },
   "env": {
