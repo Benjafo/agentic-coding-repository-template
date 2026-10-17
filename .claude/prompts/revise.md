@@ -17,7 +17,7 @@ The Action restored `.claude/`, `CLAUDE.md`, `.mcp.json`, `.claude.json`, `.gitm
 ## Do what the comment asks, and only that
 
 - `@claude fix …`: make the change, keep the criteria tests from the first commit untouched (if the fix needs a criterion to change, say so in a PR comment and stop), run `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, commit with a message that names what the comment asked for, push to `{{CLAUDE_BRANCH}}`.
-- `@claude rebase onto development`: bring the branch up to date with a merge, not a history rewrite (force pushes are denied in `.claude/settings.json`, and the squash merge collapses the merge commit anyway): `git fetch origin development`, run the restore script, `git merge origin/development`, resolve conflicts honoring development's version of anything you didn't touch, run the checks, `git push origin {{CLAUDE_BRANCH}}`.
+- `@claude rebase onto development`: `git fetch origin development`, run the restore script, `git rebase origin/development`, resolve conflicts honoring development's version of anything you didn't touch, run the checks, then `git push --force-with-lease origin {{CLAUDE_BRANCH}}` (the only force push you ever make, and only to this branch). Keep the first commit tests-only and the criteria tests unchanged through the rebase.
 - Anything else: do the smallest thing that satisfies the comment.
 
 Update the PR body with `gh pr comment` only (you cannot edit the body): post one comment that says what changed in this revision, which checks you ran, and anything you had to guess. If screenshots changed, re-capture into `screenshots/issue-N/` as the last commit and say so.
