@@ -231,12 +231,17 @@ cat <<EOF
 == 7. done. The project's UI toggles have no API; do them by hand:
 
   https://github.com/users/$ME/projects/$PROJECT_NUMBER/workflows
-    • Auto-add to project: on, for this repo, filter "is:issue" (hand-written issues land
-      in Backlog; /plan adds its own and sets Backlog itself; PRs stay off the board)
+    • Auto-add to project: on, for this repo, filter "is:issue" (PRs stay off the board)
+    • Item added to project: on, set Status: Backlog  (auto-add alone gives a hand-written
+      issue no Status at all, so it sits in no column; /plan sets Backlog itself)
     • Item closed → set Status: Done
-    • Pull request linked → set Status: In review
+    • Pull request linked to issue: on, and CHANGE the Status it sets from GitHub's default,
+      In Progress, to In review  (left at the default, every card with an open PR shows as
+      In Progress and the loop can't tell "running" from "waiting for my review")
     • Pull request merged → set Status: Done  (redundant with Item closed via Closes #N,
       harmless)
+    • Leave Auto-close issue off: it would close an issue when its card is dragged to Done,
+      the reverse of what the loop wants.
     Note: nothing moves a card back out of In review. On close-and-reissue, drag the
     card to Ready yourself as part of rewriting the issue.
     Note: "Item closed" fires on every close, merged or not, and has no filter on the
