@@ -115,7 +115,16 @@ if git diff --quiet -- "$PROJECT_JSON" && git ls-files --error-unmatch "$PROJECT
 else
   git add "$PROJECT_JSON"
   git commit -q -m "setup: record project ids in .claude/project.json"
-  git push -q origin development
+  echo "  committed"
+fi
+# Push whatever is ahead, including a commit from an earlier run whose push failed
+# (e.g. a stale HTTPS credential). A no-op when origin is already up to date.
+if [ "$(git rev-list --count origin/development..HEAD)" -gt 0 ]; then
+  git push -q origin development || {
+    echo "error: push to origin failed. If this is an HTTPS auth error, switch the remote to SSH:" >&2
+    echo "  git remote set-url origin git@github.com:$REPO.git && ./setup.sh" >&2
+    exit 1
+  }
   echo "  pushed"
 fi
 
