@@ -33,10 +33,24 @@ OWNER="${REPO%%/*}"
 NAME="${REPO##*/}"
 DEFAULT="$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
 ME="$(gh api user --jq .login)"
+PRIVATE="$(gh repo view --json isPrivate --jq .isPrivate)"
 
 echo "repo:    $REPO"
 echo "default: $DEFAULT"
 echo "user:    $ME"
+echo "private: $PRIVATE"
+if [ "$PRIVATE" = "true" ]; then
+  cat <<'EOT'
+
+  NOTE: private repo. Code scanning (CodeQL), secret scanning and Dependabot
+  security updates need GitHub Advanced Security, which a personal private repo
+  does not have, so the CodeQL workflow fails to upload and the "CodeQL" check
+  never reports. This script leaves CodeQL out of development's required checks
+  on a private repo; the workflow file itself still runs (and fails) until you
+  delete .github/workflows/codeql.yml or make the repo public. Actions minutes
+  are also billed on private repos.
+EOT
+fi
 
 if [ "$DEFAULT" != "development" ]; then
   echo "error: the default branch is '$DEFAULT', not 'development'. Set it in Settings → General before running this." >&2
@@ -196,7 +210,12 @@ ruleset() { # name, branch, merge method, status checks (json array)
   fi
 }
 # development: PR required, squash only, ci and CodeQL must pass, no force push, no delete.
-ruleset "development" development squash '[{"context":"ci"},{"context":"CodeQL"}]'
+# On a private repo CodeQL can't report (no Advanced Security), so only ci is required there.
+if [ "$PRIVATE" = "true" ]; then
+  ruleset "development" development squash '[{"context":"ci"}]'
+else
+  ruleset "development" development squash '[{"context":"ci"},{"context":"CodeQL"}]'
+fi
 # production: PR required (the release PR), merge commit only, ci must pass.
 ruleset "production" production merge '[{"context":"ci"}]'
 
