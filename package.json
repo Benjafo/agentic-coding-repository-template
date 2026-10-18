@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-exclude='tools/**' --test-coverage-exclude='test/**' --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info",
+    "test:coverage": "mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-exclude='tools/**' --test-coverage-exclude='test/**' --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info",
     "coverage:patch": "node tools/patch-coverage.mjs",
     "build": "echo \"no build step yet: /bootstrap wires one\"",
     "dev": "echo \"no dev server yet: /bootstrap wires one\"",

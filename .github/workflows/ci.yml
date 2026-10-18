@@ -42,9 +42,7 @@ jobs:
         run: npm run typecheck
 
       - name: Test with coverage
-        run: |
-          mkdir -p coverage
-          npm run test:coverage
+        run: npm run test:coverage
 
       - name: Patch coverage on changed lines
         if: github.event_name == 'pull_request'
