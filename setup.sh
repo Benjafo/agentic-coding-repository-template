@@ -18,7 +18,7 @@
 #   5. rulesets + merge settings  on development and production
 #   6. secrets and variables      CLAUDE_CODE_OAUTH_TOKEN, LOOP_APP_ID,
 #                                 LOOP_APP_PRIVATE_KEY, LOOP_APP_SLUG
-#   7. prints the manual steps    two project UI toggles, preview host
+#   7. prints the manual steps    project UI toggles, preview host
 #
 # Re-runnable: each step skips what already exists.
 set -euo pipefail
@@ -225,9 +225,16 @@ cat <<EOF
 == 7. done. The project's UI toggles have no API; do them by hand:
 
   https://github.com/users/$ME/projects/$PROJECT_NUMBER/workflows
-    • Auto-add to project: on, for this repo, issues (hand-written issues land in Backlog;
-      /plan adds its own and sets Backlog itself)
+    • Auto-add to project: on, for this repo, filter "is:issue" (hand-written issues land
+      in Backlog; /plan adds its own and sets Backlog itself; PRs stay off the board)
     • Item closed → set Status: Done
+    • Pull request linked → set Status: In review  (add the "In review" option to the
+      Status field first, between In Progress and Done; the skills never set it, so
+      .claude/project.json needs no change)
+    • Pull request merged → set Status: Done  (redundant with Item closed via Closes #N,
+      harmless)
+    Note: nothing moves a card back out of In review. On close-and-reissue, drag the
+    card to Ready yourself as part of rewriting the issue.
   https://github.com/users/$ME/projects/$PROJECT_NUMBER
     • Optional: + New view → Board, to see Status as columns. The loop reads the Status
       field, not a view, so the default table works too.
