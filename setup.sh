@@ -73,7 +73,15 @@ if [ -f "$PROJECT_JSON" ] && jq -e .project_id "$PROJECT_JSON" >/dev/null 2>&1; 
 else
   PROJECT_NUMBER="$(gh project create --owner "@me" --title "$NAME" --format json --jq .number)"
   echo "  created project #$PROJECT_NUMBER"
-  gh project link "$PROJECT_NUMBER" --owner "@me" --repo "$REPO" >/dev/null 2>&1 || true
+fi
+# Link the project to the repo so it shows under the repo's Projects tab and
+# auto-add can target it. Re-runnable; report a failure instead of hiding it.
+LINK_FAILED=false
+if gh project link "$PROJECT_NUMBER" --owner "@me" --repo "$REPO" >/dev/null 2>&1; then
+  echo "  linked project #$PROJECT_NUMBER to $REPO"
+else
+  LINK_FAILED=true
+  echo "  warning: could not link project #$PROJECT_NUMBER to $REPO (see manual steps at the end)"
 fi
 PROJECT_ID="$(gh project view "$PROJECT_NUMBER" --owner "@me" --format json --jq .id)"
 STATUS_FIELD_ID="$(gh project field-list "$PROJECT_NUMBER" --owner "@me" --format json --jq '.fields[] | select(.name=="Status") | .id')"
@@ -214,12 +222,23 @@ fi
 # ---------------------------------------------------------------- 7. manual
 cat <<EOF
 
-== 7. done. Two project toggles have no API; do them in the UI:
+== 7. done. The project's UI toggles have no API; do them by hand:
 
   https://github.com/users/$ME/projects/$PROJECT_NUMBER/workflows
     • Auto-add to project: on, for this repo, issues (hand-written issues land in Backlog;
       /plan adds its own and sets Backlog itself)
     • Item closed → set Status: Done
+  https://github.com/users/$ME/projects/$PROJECT_NUMBER
+    • Optional: + New view → Board, to see Status as columns. The loop reads the Status
+      field, not a view, so the default table works too.
+EOF
+if [ "$LINK_FAILED" = true ]; then
+  cat <<EOF
+    • Link the project to the repo (the script could not): $REPO → Projects tab →
+      "Link a project" → pick "$NAME".
+EOF
+fi
+cat <<EOF
 
 Then:
   • Preview host: connect the repo, set 'production' as the production branch, and
