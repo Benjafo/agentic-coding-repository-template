@@ -54,7 +54,7 @@ jobs:
           private-key: ${{ secrets.LOOP_APP_PRIVATE_KEY }}
 
       - name: Checkout development
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: development
           fetch-depth: 0
